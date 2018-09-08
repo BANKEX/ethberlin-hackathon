@@ -1,11 +1,8 @@
-const user = require('./user')
-const article = require('./article')
-const value = require('./value')
-const snark = require('./snark')
+
+const vote = require('./vote')
+const contract = require('./contract')
 
 module.exports = (router) => {
-    user(router)
-    article(router)
-    snark(router)
-    value(router)
+    contract(router)
+    vote(router)
 }

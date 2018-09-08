@@ -1,28 +1,40 @@
-/** */
-const Snark = require('./../models/Snark')
+const fs = require('fs');
+const child = require('child_process');
 
 module.exports = {
-    addSnark: (req, res, next) => {
-        new Value(req.body).save((err, newSnark) => {
-            if (err)
-                res.send(err)
-            else if (!newSnark)
-                res.send(400)
-            else
-                res.send(newSnark)
-            next()
+    createInput:(data, next)=>{
+        //pass data to python script
+        var dir=__dirname.replace('server/server/models','pysigner')
+        var messageFile=dir+'/data/input_snark.txt';
+
+        fs.writeFile(messageFile, JSON.stringify( data ), function (err) {
+            if (err) return console.log(err);
+            var pythonScript = child.execFile(dir+'/curvetool.py',
+                [ "gencert", messageFile ], function(err, stdout, stderr) {
+                    if (err) return console.log(err);
+                    console.log(stdout);
+                    //read data from result file and pass to the next function
+                    next(data);
+                });
+
         });
     },
-    getSnark: (req, res, next) => {
-        Value.findById(req.params.id).then
-        /*populate('following').exec*/((err, snark)=> {
-            if (err)
-                res.send(err)
-            else if (!snark)
-                res.send(404)
-            else
-                res.send(snark)
-            next()            
-        })
+    generateSnark:(data, next)=>{
+        //pass data to cpp lib
+        var dir=__dirname.replace('server/server/models','pysigner')
+        var messageFile=dir+'/data/input_snark.txt';
+
+        fs.writeFile(messageFile, JSON.stringify( data ), function (err) {
+            if (err) return console.log(err);
+            var pythonScript = child.execFile(dir+'/curvetool.py',
+                [ "gencert", messageFile ], function(err, stdout, stderr) {
+                    if (err) return console.log(err);
+                    console.log(stdout);
+                    //read data from result file and pass to the next function
+                    next(data);
+                });
+
+        });
     }
+
 }

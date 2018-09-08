@@ -5,8 +5,8 @@ const child = require('child_process');
 
 let ValueSchema = new mongoose.Schema(
     {
-        value: Number,
         vote: Number,
+        answer: Number,
         name: String,
         m: String
     }
