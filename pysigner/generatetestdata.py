@@ -25,6 +25,26 @@ def wrf(nm, data):
     res=f.write(data)
 
 
+
+reverse = {
+  "0" : "0",
+  "1" : "8",
+  "2" : "4",
+  "3" : "c",
+  "4" : "2",
+  "5" : "a",
+  "6" : "6",
+  "7" : "e",
+  "8" : "1",
+  "9" : "9",
+  "a" : "5",
+  "b" : "d",
+  "c" : "3",
+  "d" : "b",
+  "e" : "7",
+  "f" : "f"
+}
+
 bitify = lambda P : toBin(hex(int(''.join(str(e) for e in hexToBinary(hex(P))[::-1]),2)))
 
 Bx = 17777552123799933955779906779655732241715742912184938656739573121738514868268 
@@ -33,7 +53,10 @@ By = 262658914462071302666956868943087301062580372804992412124378450238909701947
 base = Point(Fq(Bx), Fq(By))
 
 
-msghexify = lambda x: "".join(["0"]*(66-len(hex(x)))+[hex(x)[2:]])
+def msghexify(x):
+  data = ["0"]*(66-len(hex(x)))+[hex(x)[2:]]
+  data = [reverse[data[i]] for i in range(63, -1, -1)]
+  return "".join(data)
 
 fp = open("sample.txt", "w")
 
