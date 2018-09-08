@@ -1,4 +1,4 @@
-# ethberlin-hackathon
+
 # We have many branches here!
 
 Documentation and drafts are here:
