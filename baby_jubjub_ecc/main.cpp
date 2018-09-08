@@ -25,6 +25,8 @@
 #include "eddsa.hpp"
 #include "pedersen_commitment.hpp"
 
+#include "./export.cpp"
+
 
 
 using namespace libsnark;
@@ -196,6 +198,9 @@ load keypair.pk and keypair.vk from files
 
     std::cout << pb.num_constraints() << std::endl;
 
+    vk2json(keypair, "keys.json");
+    proof_to_json(proof, pb.primary_input());
+
     return pb;
 /*
 
@@ -221,99 +226,4 @@ int main () {
     protoboard<FieldT> proof=compute_proof<libff::alt_bn128_pp, HashT>(snark,mm_stub);
 
     return 0;
-}
-
-void dump_keys(protoboard<FieldT> pb, std::string path)
-{
-    r1cs_constraint_system<FieldT> constraints = pb.get_constraint_system();
-    // std::stringstream ss;
-    // std::ofstream fh;
-    // fh.open(path, std::ios::binary);
-
-
-    //r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair = generateKeypair(pb.get_constraint_system());
-
-    //save keys
-    // vk2json(keypair, "vk.json");
-    // writeToFile("./pk.raw", keypair.pk);
-    // writeToFile("./vk.raw", keypair.vk);
-}
-
-void vk2json(r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair, std::string path ) {
-
-    // std::stringstream ss;
-    // std::ofstream fh;
-    // fh.open(path, std::ios::binary);
-    // unsigned icLength = keypair.vk.encoded_IC_query.rest.indices.size() + 1;
-    
-    // ss << "{\n";
-    // ss << " \"a\" :[" << outputPointG2AffineAsHex(keypair.vk.alphaA_g2) << "],\n";
-    // ss << " \"b\"  :[" << outputPointG1AffineAsHex(keypair.vk.alphaB_g1) << "],\n";
-    // ss << " \"c\" :[" << outputPointG2AffineAsHex(keypair.vk.alphaC_g2) << "],\n";
-    // ss << " \"g\" :[" << outputPointG2AffineAsHex(keypair.vk.gamma_g2)<< "],\n";
-    // ss << " \"gb1\" :[" << outputPointG1AffineAsHex(keypair.vk.gamma_beta_g1)<< "],\n";
-    // ss << " \"gb2\" :[" << outputPointG2AffineAsHex(keypair.vk.gamma_beta_g2)<< "],\n";
-    // ss << " \"z\" :[" << outputPointG2AffineAsHex(keypair.vk.rC_Z_g2)<< "],\n";
-
-    // ss <<  "\"IC\" :[[" << outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.first) << "]";
-    
-    // for (size_t i = 1; i < icLength; ++i)
-    // {   
-    //     auto vkICi = outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.rest.values[i - 1]);
-    //     ss << ",[" <<  vkICi << "]";
-    // } 
-    // ss << "]";
-    // ss << "}";
-    // ss.rdbuf()->pubseekpos(0, std::ios_base::out);
-    // fh << ss.rdbuf();
-    // fh.flush();
-    // fh.close();
-}
-
-template<typename FieldT>
-std::string proof_to_json(r1cs_ppzksnark_proof<libff::alt_bn128_pp> proof, r1cs_primary_input<FieldT> input) {
-    /*
-    std::cout << "proof.A = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_A.g)<< ");" << endl;
-    std::cout << "proof.A_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_A.h)<< ");" << endl;
-    std::cout << "proof.B = Pairing.G2Point(" << outputPointG2AffineAsHex(proof.g_B.g)<< ");" << endl;
-    std::cout << "proof.B_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_B.h)<<");" << endl;
-    std::cout << "proof.C = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_C.g)<< ");" << endl;
-    std::cout << "proof.C_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_C.h)<<");" << endl;
-    std::cout << "proof.H = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_H)<<");"<< endl;
-    std::cout << "proof.K = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_K)<<");"<< endl; 
-
-
-    std::string path = "../zksnark_element/proof.json";
-    std::stringstream ss;
-    std::ofstream fh;
-    fh.open(path, std::ios::binary);
-    
-    ss << "{\n";
-    ss << " \"a\" :[" << outputPointG1AffineAsHex(proof.g_A.g) << "],\n";
-    ss << " \"a_p\"  :[" << outputPointG1AffineAsHex(proof.g_A.h)<< "],\n";
-    ss << " \"b\"  :[" << outputPointG2AffineAsHex(proof.g_B.g)<< "],\n";
-    ss << " \"b_p\" :[" << outputPointG1AffineAsHex(proof.g_B.h)<< "],\n";
-    ss << " \"c\" :[" << outputPointG1AffineAsHex(proof.g_C.g)<< "],\n";
-    ss << " \"c_p\" :[" << outputPointG1AffineAsHex(proof.g_C.h)<< "],\n";
-    ss << " \"h\" :[" << outputPointG1AffineAsHex(proof.g_H)<< "],\n";
-    ss << " \"k\" :[" << outputPointG1AffineAsHex(proof.g_K)<< "],\n";
-    ss << " \"input\" :" << "["; //1 should always be the first variavle passed
-
-    for (size_t i = 0; i < input.size(); ++i)
-    {   
-        ss << "\"0x" << HexStringFromLibsnarkBigint(input[i].as_bigint()) << "\""; 
-        if ( i < input.size() - 1 ) { 
-            ss<< ", ";
-        }
-    }
-    ss << "]\n";
-
-    ss << "}";
-    ss.rdbuf()->pubseekpos(0, std::ios_base::out);
-    fh << ss.rdbuf();
-    fh.flush();
-    fh.close();
-    return(ss.str());
-    */
-   return ("");
 }
