@@ -37,7 +37,7 @@ python generatestatdata.py
 for random data
 
 ```
-python generatestatdata.py file.txt
+python generatestatdata.py messages.txt
 ``` 
 
 where file.txt structure is array of numbers
