@@ -30,3 +30,17 @@ message txt format:
 
 
 use generatestatdata.py to compute sample.txt
+
+```
+python generatestatdata.py
+``` 
+for random data
+
+```
+python generatestatdata.py file.txt
+``` 
+
+where file.txt structure is array of numbers
+```
+[1,2,3,4,5]
+```

@@ -38,8 +38,16 @@ msghexify = lambda x: "".join(["0"]*(66-len(hex(x)))+[hex(x)[2:]])
 fp = open("sample.txt", "w")
 
 npoints = 5
-fp.write(str(npoints)+"\n")
 messages = [randint(0, 100) for i in range(0,npoints)]
+
+from sys import argv
+if len(argv) > 1:
+  messages = loads(rdf(argv[1]))
+  npoints = len(messages)
+
+
+fp.write(str(npoints)+"\n")
+
 _median = median(messages)
 data = []
 
