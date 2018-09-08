@@ -12,10 +12,12 @@ This is a naive implmentaion and considerable optimizations are possible.
 ## build instructions:
 
 ### build libsnark gadget and getting the proving key
-get dependencies `git submodule update --init --recursive`
-`mkdir build` 
-`cd build`
-`cmake .. && make`
+docker run -ti --name ubuntu -v /.../baby_jubjub_ecc:/code ubuntu:16.04 /bin/bash
+cd /code
+apt update && apt install -y build-essential cmake git libgmp3-dev libprocps4-dev python-markdown libboost-all-dev libssl-dev pkg-config
+git submodule update --init --recursive
+mkdir build && cd build
+cmake .. && make
 
 ### Running the tests
 Start your preferred ethereum node, `cd tests` and run `python3 test*` will generate all the 
