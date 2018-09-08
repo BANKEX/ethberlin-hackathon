@@ -518,6 +518,97 @@ void test_eddsa2() {
     r1cs_ppzksnark_keypair<ppT> keypair = r1cs_ppzksnark_generator<ppT>(pb.get_constraint_system());
     printf("\n"); libff::print_indent(); libff::print_mem("after generator");
 
+/*
+save keypair via
+
+    vk2json(keypair, vk);
+    writeToFile(pk, keypair.pk); 
+
+Where vp, pk - file names (string).
+
+
+void vk2json(r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair, std::string path ) {
+
+    std::stringstream ss;
+    std::ofstream fh;
+    fh.open(path, std::ios::binary);
+    unsigned icLength = keypair.vk.encoded_IC_query.rest.indices.size() + 1;
+    
+    ss << "{\n";
+    ss << " \"a\" :[" << outputPointG2AffineAsHex(keypair.vk.alphaA_g2) << "],\n";
+    ss << " \"b\"  :[" << outputPointG1AffineAsHex(keypair.vk.alphaB_g1) << "],\n";
+    ss << " \"c\" :[" << outputPointG2AffineAsHex(keypair.vk.alphaC_g2) << "],\n";
+    ss << " \"g\" :[" << outputPointG2AffineAsHex(keypair.vk.gamma_g2)<< "],\n";
+    ss << " \"gb1\" :[" << outputPointG1AffineAsHex(keypair.vk.gamma_beta_g1)<< "],\n";
+    ss << " \"gb2\" :[" << outputPointG2AffineAsHex(keypair.vk.gamma_beta_g2)<< "],\n";
+    ss << " \"z\" :[" << outputPointG2AffineAsHex(keypair.vk.rC_Z_g2)<< "],\n";
+
+    ss <<  "\"IC\" :[[" << outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.first) << "]";
+    
+    for (size_t i = 1; i < icLength; ++i)
+    {   
+        auto vkICi = outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.rest.values[i - 1]);
+        ss << ",[" <<  vkICi << "]";
+    } 
+    ss << "]";
+    ss << "}";
+    ss.rdbuf()->pubseekpos(0, std::ios_base::out);
+    fh << ss.rdbuf();
+    fh.flush();
+    fh.close();
+}
+
+
+template<typename FieldT>
+char* dump_key(protoboard<FieldT> pb, std::string path)
+{
+
+    r1cs_constraint_system<FieldT> constraints = pb.get_constraint_system();
+    std::stringstream ss;
+    std::ofstream fh;
+    fh.open(path, std::ios::binary);
+
+
+    r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair = generateKeypair(pb.get_constraint_system());
+
+    //save keys
+    vk2json(keypair, "vk.json");
+    writeToFile("../zksnark_element/pk.raw", keypair.pk);
+    writeToFile("../zksnark_element/vk.raw", keypair.vk);
+
+    pb.primary_input();
+    pb.auxiliary_input();
+
+    r1cs_primary_input <FieldT> primary_input = pb.primary_input();
+    r1cs_auxiliary_input <FieldT> auxiliary_input = pb.auxiliary_input();
+    ss << "primaryinputs" << primary_input;
+    ss << "aux input" << auxiliary_input;
+
+
+    r1cs_ppzksnark_proof<libff::alt_bn128_pp> proof = r1cs_ppzksnark_prover<libff::alt_bn128_pp>(keypair.pk, primary_input, auxiliary_input);
+
+
+    auto json = proof_to_json (proof, primary_input);
+
+    ss.rdbuf()->pubseekpos(0, std::ios_base::out);
+    fh << ss.rdbuf();
+    fh.flush();
+    fh.close();
+
+    auto result = new char[json.size()];
+    memcpy(result, json.c_str(), json.size() + 1);
+    return result;
+
+
+}
+
+
+
+
+
+
+*/
+
     libff::print_header("Preprocess verification key");
     r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(keypair.vk);
 
