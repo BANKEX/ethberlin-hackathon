@@ -1,18 +1,19 @@
 pragma solidity ^0.4.24;
 
-import { Pairing, Verifier } from './contract.col';
+import { Verifier } from './contract.col';
 
 
 contract TrustedResource {
     
-    uint[] public trustedInput;
-    uint[] public challengingInput;
-    bytes32 public challengingHash;
-    address public challengingAuthor;
+    // Constants passed thorugh constructor
+    Verifier public verifier;
     uint256 public minValue;
     uint256 public challengeTime;
-    Verifier public verifier;
 
+    uint[] internal trustedInput_;
+    uint[] internal challengingInput_;
+    bytes32 public challengingHash;
+    address public challengingAuthor;
     mapping(address => uint256) public balances;
     mapping(address => uint256) public lastSumbitted;
     uint256 public lastSumbittedOfAll;
@@ -36,6 +37,20 @@ contract TrustedResource {
         challengeTime = _challengeTime;
     }
 
+    function trustedInput() public view returns(uint[]) {
+        if (lastSumbittedOfAll > 0 && now - lastSumbitted[msg.sender] >= challengeTime) {
+            return challengingInput_;
+        }
+        return trustedInput_;
+    }
+
+    function challengingInput() public view returns(uint[]) {
+        if (lastSumbittedOfAll > 0 && now - lastSumbitted[msg.sender] >= challengeTime) {
+            return new uint[](0);
+        }
+        return challengingInput_;
+    }
+
     function submit(
         uint[2] a,
         uint[2] a_p,
@@ -51,8 +66,8 @@ contract TrustedResource {
         require(balances[msg.sender] >= minValue, "submit: not enought value stacked");
         require(now - lastSumbittedOfAll >= challengeTime, "submit: wait until challenge period expired");
 
-        trustedInput = challengingInput;
-        challengingInput = input;
+        trustedInput_ = challengingInput_;
+        challengingInput_ = input;
         challengingHash = keccak256(abi.encodePacked(a, a_p, b, b_p, c, c_p, h, k, input));
         challengingAuthor = msg.sender;
 
@@ -86,6 +101,10 @@ contract TrustedResource {
         msg.sender.transfer(reward);
         address(0).transfer(balances[challengingAuthor] - reward); // Burn half to prevent self-challenging
         balances[challengingAuthor] = 0;
+
+        delete challengingInput_;
+        delete challengingHash;
+        delete challengingAuthor;
 
         emit ChallengeWon();
     }
