@@ -7,7 +7,6 @@ import Profile from './components/Profile'
 import ArticleView from './components/ArticleView'
 import Editor from './components/Editor'
 import requireAuthentication from './utils/requireAuth'
-import SignInWith from './components/SignInWith'
 //import  from './components'
 
 class App extends Component {

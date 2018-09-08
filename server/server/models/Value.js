@@ -1,29 +1,35 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const bn = require('bn.js');
+const fs = require('fs');
+const child = require('child_process');
 
 let ValueSchema = new mongoose.Schema(
     {
         value: Number,
-        author: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        snark: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Snark'
-        }
+        vote: Number,
+        name: String,
+        m: String
     }
 );
-ValueSchema.methods.addAuthor = function (author_id) {
-    this.author = author_id
-    return this.save()
+ValueSchema.methods.generateM = function () {
+    var rand =new bn(this.name, 16);
+    this.m="0".repeat(64-rand.length)+rand;
 }
-ValueSchema.methods.addSnark = function (snark_id) {
-    this.snark = snark_id
-    return this.save()
+ValueSchema.methods.signing = function () {
+    //save to file and then launch python script
+    var dir=__dirname.replace('server/server/models','pysigner')
+    var messageFile=dir+'/data/'+this.vote+'_'+this.name+'.txt';
+
+    fs.writeFile(messageFile, JSON.stringify( this ), function (err) {
+        if (err) return console.log(err);
+        var pythonScript = child.execFile(dir+'/curvetool.py',
+            [ "gencert", messageFile ], function(err, stdout, stderr) {
+                if (err) return console.log(err);
+                console.log(stdout);
+            });
+
+    });
+
 }
-ValueSchema.methods.getSnarkValue = function (_id) {
-    Value.find({'snark': _id}).then((value) => {
-        return value
-    })
-}
+
 module.exports = mongoose.model('Values', ValueSchema)

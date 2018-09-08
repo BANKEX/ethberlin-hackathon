@@ -3,10 +3,7 @@ const Value = require('./../models/Value')
 
 module.exports = {
     addValue: (req, res, next) => {
-        var newValue = new Value(req.body);
-        newValue.generateM();
-        newValue.signing();
-        newValue.save((err, newValue) => {
+        new Value(req.body).save((err, newValue) => {
             if (err)
                 res.send(err)
             else if (!newValue)

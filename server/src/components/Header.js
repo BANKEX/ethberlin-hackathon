@@ -25,24 +25,13 @@ class Header extends Component {
                     <img alt="Stories" src="/assets/img/stories-logo.svg" height="40"/>
                 </a>
             </div>
-            <ul className="nav navbar-nav filter-links">
-                <li><a className="" href="/">Top stories</a></li>
-            </ul>
-
-            <div className="folding-nav">
-                <ul className="nav navbar-nav navbar-right">
-                    {this.props.isAuth ? <li className="new-post-button"><a className="button" data-behavior="trigger-overlay" href="/editor">Write a story</a></li> : ''}
-                    {this.props.isAuth ? '' : <li onClick={this.props.openSignInWith} className="sign-in-button"><a className="button green-border-button" data-behavior="trigger-overlay" href="#">Sign in / Sign up</a></li>}
-                </ul>
-            </div>
-
         </div>
     </nav>
 </div>
             );
     }
 }
-const mapStateToProps = state => {
+const mr1cs_ppzksnark_generatorapStateToProps = state => {
     return {
         user: state.authUser.user,
         isAuth: state.authUser.isAuth

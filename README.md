@@ -1,7 +1,11 @@
+
 forked from https://github.com/barryWhiteHat/baby_jubjub
 using https://gist.github.com/swasilyev/40df49c3ab4dabe854027a8791460d6d
 
+Tool to use signature with baby_jubjub curve
+
 # baby\_jubjub\_ecc
+
 
 This repository contains zksnark constarint systems for [twisted edwards curve](https://github.com/barryWhiteHat/baby_jubjub) 
 point addition, point multiplication, eddsa signature verification and pedersen commitments. As well as python scripts for
@@ -32,9 +36,35 @@ cd build
 ```
 
 
-## Resources 
+
 [Lecture 16](https://www.youtube.com/watch?v=vnpZXJL6QCQ) and [Lecture 17] (https://www.youtube.com/watch?v=zTt4gvuQ6sY)
 of [this](https://www.youtube.com/channel/UC1usFRN4LCMcfIV7UjHNuQg) course should help you get a good understanding of 
 the basics of what we are doing here. 
 
 
+use pysigner/curvetool.py
+
+```
+curvetool.py gencert cert.txt
+```
+create certificate with private and public keys
+
+```
+curvetool.py sign  message.txt cert.txt
+```
+create certificate with private and public keys
+
+
+```
+curvetool.py gencert message.txt cert.txt
+```
+create certificate with private and public keys
+
+
+message txt format:
+
+```
+{
+  "m":"64 hexadecimal syumbols"
+}
+```

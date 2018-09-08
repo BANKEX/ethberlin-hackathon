@@ -9,14 +9,7 @@ const cloudinary = require('cloudinary')
 
 const app = express()
 const router = express.Router()
-const url = process.env.MONGODB_URI || "mongodb://localhost:27017/medium"
-
-/** configure cloudinary */
-cloudinary.config({
-    cloud_name: 'chidumennamdi',
-    api_key: '',
-    api_secret: ''
-})
+const url = process.env.MONGODB_URI || "mongodb://localhost:27017/snarkValue"
 
 /** connect to MongoDB datastore */
 try {
