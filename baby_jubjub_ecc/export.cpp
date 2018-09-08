@@ -226,12 +226,12 @@ void vk2json(r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair, std::string pa
     ss << " \"gb2\" :[" << outputPointG2AffineAsHex(keypair.vk.gamma_beta_g2)<< "],\n";
     ss << " \"z\" :[" << outputPointG2AffineAsHex(keypair.vk.rC_Z_g2)<< "],\n";
 
-    ss <<  "\"IC\" :[[" << outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.first) << "]";
+    ss <<  "\"IC\" :[" << outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.first);
 
     for (size_t i = 1; i < icLength; ++i)
     {
         auto vkICi = outputPointG1AffineAsHex(keypair.vk.encoded_IC_query.rest.values[i - 1]);
-        ss << ",[" <<  vkICi << "]";
+        ss << "," <<  vkICi;
     }
     ss << "]";
     ss << "}";
