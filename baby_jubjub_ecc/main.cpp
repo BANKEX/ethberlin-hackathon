@@ -64,7 +64,6 @@ protoboard<FieldT> trust_setup(vector<bool> pkx_stub, vector<bool>  pky_stub, ve
         pk_y_bins[i].fill_with_bits(pb, pky_stub);
     }
 
-    r1cs_ppzksnark_keypair<ppT> keypair = r1cs_ppzksnark_generator<ppT>(pb.get_constraint_system());
 
     std::vector<pb_variable_array<FieldT>> r_x_bins(n);
     std::vector<pb_variable_array<FieldT>> r_y_bins(n);
