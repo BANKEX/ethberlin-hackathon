@@ -127,7 +127,7 @@ Where vp, pk - file names (string).
 }
 
 template<typename ppT, typename HashT>
-protoboard<FieldT> compute_proof(const int n, protoboard<FieldT> pb, vector<bool> mm[])
+protoboard<FieldT> compute_proof(const int n, char* med, protoboard<FieldT> pb, vector<bool> mm[])
 {
     pb_variable<FieldT> median;
     median.allocate(pb, "median");
@@ -146,7 +146,8 @@ protoboard<FieldT> compute_proof(const int n, protoboard<FieldT> pb, vector<bool
         packers[i].generate_r1cs_constraints(false); //TODO: bitness
         packers[i].generate_r1cs_witness_from_bits();
     }
-    pb.val(median) = pb.val(packed_messages[0]);
+    //pb.val(median) = pb.val(packed_messages[0]);
+    pb.val(median) = FieldT(med);
 
     std::cout << "median = " << pb.val(median) << std::endl;
 
@@ -221,7 +222,7 @@ std::vector<bool> readVector(std::ifstream& ins) {
 int main () {
     libff::alt_bn128_pp::init_public_params();
 
-    std::ifstream ins("input");
+    std::ifstream ins("input.txt");
 
     if (!ins.is_open()) {
         std::cout << "Error opening input file";
@@ -229,7 +230,7 @@ int main () {
     }
 
     int n;
-    int median;
+    char median[256];
     ins >> n >> median;
     std::vector<bool> pkx[n], pky[n], rx[n], ry[n], s[n], m[n];
 
@@ -256,7 +257,7 @@ int main () {
 
 
     protoboard<FieldT> snark = trust_setup<libff::alt_bn128_pp, HashT>(n, pkx, pky, rx, ry, s, m);
-    protoboard<FieldT> proof = compute_proof<libff::alt_bn128_pp, HashT>(n, snark, m);
+    protoboard<FieldT> proof = compute_proof<libff::alt_bn128_pp, HashT>(n, median, snark, m);
 
     return 0;
 }
