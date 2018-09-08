@@ -27,3 +27,6 @@ message txt format:
   "m":"64 hexadecimal syumbols"
 }
 ```
+
+
+use generatestatdata.py to compute sample.txt
