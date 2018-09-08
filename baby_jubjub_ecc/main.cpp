@@ -559,55 +559,21 @@ void vk2json(r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair, std::string pa
 }
 
 
-template<typename FieldT>
-char* dump_key(protoboard<FieldT> pb, std::string path)
-{
-
-    r1cs_constraint_system<FieldT> constraints = pb.get_constraint_system();
-    std::stringstream ss;
-    std::ofstream fh;
-    fh.open(path, std::ios::binary);
-
-
-    r1cs_ppzksnark_keypair<libff::alt_bn128_pp> keypair = generateKeypair(pb.get_constraint_system());
-
-    //save keys
-    vk2json(keypair, "vk.json");
-    writeToFile("../zksnark_element/pk.raw", keypair.pk);
-    writeToFile("../zksnark_element/vk.raw", keypair.vk);
-
-    pb.primary_input();
-    pb.auxiliary_input();
-
-    r1cs_primary_input <FieldT> primary_input = pb.primary_input();
-    r1cs_auxiliary_input <FieldT> auxiliary_input = pb.auxiliary_input();
-    ss << "primaryinputs" << primary_input;
-    ss << "aux input" << auxiliary_input;
-
-
-    r1cs_ppzksnark_proof<libff::alt_bn128_pp> proof = r1cs_ppzksnark_prover<libff::alt_bn128_pp>(keypair.pk, primary_input, auxiliary_input);
-
-
-    auto json = proof_to_json (proof, primary_input);
-
-    ss.rdbuf()->pubseekpos(0, std::ios_base::out);
-    fh << ss.rdbuf();
-    fh.flush();
-    fh.close();
-
-    auto result = new char[json.size()];
-    memcpy(result, json.c_str(), json.size() + 1);
-    return result;
-
-
-}
+*/
 
 
 
+/** VERIFICATION KEY PROCESSED HERE
+ * 
+ * 
+ * */
 
+/*
 
+load keypair.pk and keypair.vk from files
 
 */
+
 
     libff::print_header("Preprocess verification key");
     r1cs_ppzksnark_processed_verification_key<ppT> pvk = r1cs_ppzksnark_verifier_process_vk<ppT>(keypair.vk);
@@ -626,6 +592,65 @@ char* dump_key(protoboard<FieldT> pb, std::string path)
     assert(ans == ans2);
     
     std::cout << pb.num_constraints() << std::endl;
+
+/*
+
+dump proof to json via 
+r1cs_primary_input - pb.primary_input() primary input. write it to file
+                    pb.auxiliary_input() secret input. do not write it to file
+
+
+template<typename FieldT>
+string proof_to_json(r1cs_ppzksnark_proof<libff::alt_bn128_pp> proof, r1cs_primary_input<FieldT> input) {
+    std::cout << "proof.A = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_A.g)<< ");" << endl;
+    std::cout << "proof.A_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_A.h)<< ");" << endl;
+    std::cout << "proof.B = Pairing.G2Point(" << outputPointG2AffineAsHex(proof.g_B.g)<< ");" << endl;
+    std::cout << "proof.B_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_B.h)<<");" << endl;
+    std::cout << "proof.C = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_C.g)<< ");" << endl;
+    std::cout << "proof.C_p = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_C.h)<<");" << endl;
+    std::cout << "proof.H = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_H)<<");"<< endl;
+    std::cout << "proof.K = Pairing.G1Point(" << outputPointG1AffineAsHex(proof.g_K)<<");"<< endl; 
+
+
+    std::string path = "../zksnark_element/proof.json";
+    std::stringstream ss;
+    std::ofstream fh;
+    fh.open(path, std::ios::binary);
+    
+    ss << "{\n";
+    ss << " \"a\" :[" << outputPointG1AffineAsHex(proof.g_A.g) << "],\n";
+    ss << " \"a_p\"  :[" << outputPointG1AffineAsHex(proof.g_A.h)<< "],\n";
+    ss << " \"b\"  :[" << outputPointG2AffineAsHex(proof.g_B.g)<< "],\n";
+    ss << " \"b_p\" :[" << outputPointG1AffineAsHex(proof.g_B.h)<< "],\n";
+    ss << " \"c\" :[" << outputPointG1AffineAsHex(proof.g_C.g)<< "],\n";
+    ss << " \"c_p\" :[" << outputPointG1AffineAsHex(proof.g_C.h)<< "],\n";
+    ss << " \"h\" :[" << outputPointG1AffineAsHex(proof.g_H)<< "],\n";
+    ss << " \"k\" :[" << outputPointG1AffineAsHex(proof.g_K)<< "],\n";
+    ss << " \"input\" :" << "["; //1 should always be the first variavle passed
+
+    for (size_t i = 0; i < input.size(); ++i)
+    {   
+        ss << "\"0x" << HexStringFromLibsnarkBigint(input[i].as_bigint()) << "\""; 
+        if ( i < input.size() - 1 ) { 
+            ss<< ", ";
+        }
+    }
+    ss << "]\n";
+
+    ss << "}";
+    ss.rdbuf()->pubseekpos(0, std::ios_base::out);
+    fh << ss.rdbuf();
+    fh.flush();
+    fh.close();
+    return(ss.str());
+}
+
+
+*/
+
+
+
+
 }
 // test inputs taken from ../test/test_pedersen.py
 template<typename ppT>
