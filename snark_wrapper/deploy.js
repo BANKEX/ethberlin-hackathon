@@ -4,7 +4,7 @@ var fs = require("fs");
 var BigNumber = require('bignumber.js');
 
 // get verifcation key, proving key 
-var vk = require('./zksnark_element/vk.json');
+var vk = require('./zksnark_element/keys.json');
 
 
 var code = fs.readFileSync("./contracts/contract.sol", "utf8");
