@@ -32,7 +32,7 @@ module.exports = {
             if (err)
                 console.log(err)
             else if (!value)
-                console.log("null votes")
+                console.log("[backend] null votes")
             else
             {
                 var BreakException = {};

@@ -41,27 +41,27 @@ app.use('/api', router)
 
 /** start server */
 app.listen(port, () => {
-    console.log(`Server started at port: ${port}`);
+    console.log(`[backend] Server started at port: ${port}`);
 });
 
-
-setInterval(() => {
-    //опрос бд
-    console.log("listener");
-    votecontroller.checkVotes((data)=>{
-        console.log(data);
-        snarkcontroller.createInput(data, ()=>{
-            console.log("created inputs");
-            snarkcontroller.generateSnark(()=>{
-                console.log("generated keys.json and proof.json");
+function loop (){
+    console.log("[backend] listener started");
+    // votecontroller.checkVotes((data)=>{
+    //     console.log('[backend] votes ' + data);
+    //     snarkcontroller.createInput(data, ()=>{
+    //         console.log("[backend] created inputs");
+    //         snarkcontroller.generateSnark(()=>{
+    //             console.log("[backend] generated keys.json and proof.json");
                 contractcontroller.deploy(nodeUrl,(address)=>{
-                    console.log("deployed on adress "+ address)
+                    console.log("[backend] deployed on adress "+ address)
                     contractcontroller.verify(nodeUrl, address,(result)=>{
-                        console.log("verified " + result);
+                        console.log("[backend] verified " + result);
+                        setTimeout(loop, 15000);
                     })
-                })
-            })
-        })
+    //            })
+    //        })
+    //    })
     });
+}
 
-}, 15000);
+loop();

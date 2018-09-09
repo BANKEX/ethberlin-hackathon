@@ -34,7 +34,8 @@ if (env.NODE_ENV !== 'production') {
 
 module.exports = {
     getValue: (req, res, next) => {
-        var code = fs.readFileSync("./assets/contracts/TrustedResource.sol", "utf8");
+        var dir=__dirname.replace('controllers','assets/contract')
+        var code = fs.readFileSync(dir+"/TrustedResource.sol", "utf8");
         var compiled = Solidity.compile(code, 1)
 
         var nodeUrl="http://localhost:8545";
@@ -52,22 +53,25 @@ module.exports = {
         var snark = web3.eth.contract(abi);
         snark_deployed = snark.at(address);
         var result=snark_deployed.trustedInput.call();
-        console.log(result);
+        console.log('[backend] result of deploing contact ' + result);
         res.send(result);
         next(result);
     },
     deploy: (nodeUrl, next) => {
-        var code = fs.readFileSync("./assets/contracts/TrustedResource.sol", "utf8");
+        var dir=__dirname.replace('controllers','assets/contract')
+        var code = fs.readFileSync(dir+"/TrustedResource.sol", "utf8");
         var compiled = Solidity.compile(code, 1)
 
         var bytecode = compiled.contracts[":Verifier"].bytecode;
         var abi = compiled.contracts[":Verifier"].interface;
         var abi = JSON.parse(abi);
         if (typeof web3 !== 'undefined') {
+            console.log('web3 underfined')
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
+            console.log('web3 create locals')
+            web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/'))
             // web3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws'));
         }
 
@@ -91,40 +95,47 @@ module.exports = {
                 vk.z[1],
                 vk.IC,
                 {
-                    from: web3.eth.accounts[1],
+                    from: web3.eth.accounts[0].address(),
                     data: bytecode,
                     gas: '4700000',
                     abi: abi
                 });
 
-            verifierAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash)).contractAddress;
+            verifierAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash),(verValue)=>{
+                console.log("[bakend] verifyAdress "+value.contractAddress);
+                var compiled = Solidity.compile(code, 1)
+
+                var bytecode = compiled.contracts[":TrustedResource"].bytecode;
+                var abi = compiled.contracts[":TrustedResource"].interface;
+                var abi = JSON.parse(abi);
+
+
+                var trustedResourceAddress="";
+                (async function() {
+
+                    var trust =  web3.eth.contract(abi);
+                    var trust_deployed = await trust.new(verValue.contractAddress, "100000000", "30",
+                        {
+                            from: web3.eth.accounts[1],
+                            data: bytecode,
+                            gas: '4700000',
+                            abi: abi
+                        });
+
+
+                    trustedResourceAddress = (await web3.eth.getTransactionReceipt(trust_deployed.transactionHash, (value)=>{
+                        fs.writeFileSync(dir+"/address.txt", value.contractAddress, "utf8");
+                        console.log("[bakend] inside "+value.contractAddress);
+                        next(value.contractAddress)
+                    })).contractAddress;
+
+
+                })();
+            });
         })();
 
-        var compiled = Solidity.compile(code, 1)
-
-        var bytecode = compiled.contracts[":TrustedResource"].bytecode;
-        var abi = compiled.contracts[":TrustedResource"].interface;
-        var abi = JSON.parse(abi);
 
 
-        var trustedResourceAddress="";
-        (async function() {
-
-            var trust =  web3.eth.contract(abi);
-            var trust_deployed = await trust.new(verifierAddress, "100000000", "30",
-                {
-                    from: web3.eth.accounts[1],
-                    data: bytecode,
-                    gas: '4700000',
-                    abi: abi
-                });
-
-
-            trustedResourceAddress = (await web3.eth.getTransactionReceipt(trust_deployed.transactionHash)).contractAddress;
-            fs.writeFileSync("address.txt", trustedResourceAddress, "utf8");
-
-        })();
-        next( trustedResourceAddress);
     },
     verify: (nodeUrl, address, next) =>{
 //Wallet Initialization
@@ -159,7 +170,8 @@ module.exports = {
 
 // Here the URL can be your localhost for TestRPC or the Infura URL
         engine.addProvider(new RpcSubprovider({
-            rpcUrl: 'https://mainnet.infura.io/'+env.INFURA_TOKEN,
+            //rpcUrl: 'https://mainnet.infura.io/'+env.INFURA_TOKEN,
+            rpcUrl:'https://rinkeby.infura.io/b4nw7VFnaEUsWzyVKun8'
         }))
 
 // Wallet Attachment
@@ -180,9 +192,9 @@ module.exports = {
 
 // get verifcation key, proving key
 
-
-        var code = fs.readFileSync("./assets/contracts/TrustedResource.sol", "utf8");
-        var address = fs.readFileSync("./assets/contracts/address.txt", "utf8");
+        var dir=__dirname.replace('controllers','assets/contract')
+        var code = fs.readFileSync(dir+"/TrustedResource.sol", "utf8");
+        var address = fs.readFileSync(dir+"/address.txt", "utf8");
         var compiled = Solidity.compile(code, 1)
 
         var bytecode = compiled.contracts[":TrustedResource"].bytecode;
@@ -192,7 +204,8 @@ module.exports = {
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
+            //web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
+            web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/'))
             // web3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws'));
         }
 
@@ -210,7 +223,7 @@ module.exports = {
             proof.k,
             proof.input,
             {from:web3.eth.accounts[1], gas:2000000, value:"200000000"});
-        console.log(result);
+        console.log('[backend] result of verifying contact ' + result);
         next(result);
     }
 }

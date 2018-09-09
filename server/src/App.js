@@ -15,15 +15,9 @@ class App extends Component {
         return ( 
             <div>
             { !pathname.includes('editor') ? <Header /> : '' }
-            <SignInWith />
                 <Switch>
                 
                     <Route exact path="/" component={Feed} />
-
-                    <Route path="/profile/:id" component={Profile} />
-                    <Route path="/articleview/:id" component={ArticleView} />
-                    <Route path="/editor" component={requireAuthentication(Editor)} />
-                    <Route path="**" component={Feed} />
                 </Switch>
             </div>
         );

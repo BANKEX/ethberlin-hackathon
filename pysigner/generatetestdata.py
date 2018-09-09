@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from sapling_jubjub import *
 import hashlib
 import os, codecs
