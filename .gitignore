@@ -1,4 +1,1 @@
-build
-depends/libsnark/*
-
 __pycache__
