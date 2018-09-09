@@ -9,10 +9,12 @@ const cloudinary = require('cloudinary')
 
 const votecontroller = require('./controllers/vote.ctrl')
 const snarkcontroller = require('./controllers/snark.ctrl')
+const contractcontroller = require('./controllers/contract.ctrl')
 
 const app = express()
 const router = express.Router()
 const url = process.env.MONGODB_URI || "mongodb://137.117.212.107:27017/snark"
+const nodeUrl="http://localhost:8545";
 
 /** connect to MongoDB datastore */
 try {
@@ -50,6 +52,15 @@ setInterval(() => {
         console.log(data);
         snarkcontroller.createInput(data, (inputs)=>{
             console.log(inputs);
+            snarkcontroller.generateSnark(data,()=>{
+                console.log("generated keys.json and proof.json");
+                contractcontroller.deploy(nodeUrl,(address)=>{
+                    console.log("deployed on adress "+ address)
+                    contractcontroller.verify(nodeUrl, address,(result)=>{
+                        console.log("verified " + result);
+                    })
+                })
+            })
         })
     });
 

@@ -2,30 +2,38 @@
 var Web3 = require('web3');
 var Solidity = require('solc')
 var fs = require("fs");
-var BigNumber = require('bignumber.js');
-const Contract = require('./../models/Contract')
+
+const proof = require('./zksnark_element/proof.json');
+const vk = require('./zksnark_element/keys.json');
 
 module.exports = {
     getValue: (req, res, next) => {
-        res.send(value);
-        next();
-        // Value.find({}).then
-        // /*populate('following').exec*/((err, value)=> {
-        //     if (err)
-        //         res.send(err)
-        //     else if (!value)
-        //         res.send(404)
-        //     else
-        //         res.send(value)
-        //     next()
-        // })
+        var code = fs.readFileSync("./assets/contracts/contract.sol", "utf8");
+        var compiled = Solidity.compile(code, 1)
+
+        var nodeUrl="http://localhost:8545";
+
+        var bytecode = compiled.contracts[":Verifier"].bytecode;
+        var abi = compiled.contracts[":Verifier"].interface;
+        var abi = JSON.parse(abi);
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
+        }
+
+        var snark = web3.eth.contract(abi);
+        snark_deployed = snark.at(address);
+        var result=snark_deployed.trustedInput.call();
+        console.log(result);
+        res.send(result);
+        next(result);
     },
-    deploy: (next) => {
+    deploy: (nodeUrl, next) => {
         // get verifcation key, proving key
-        var vk = require('./zksnark_element/keys.json');
 
-
-        var code = fs.readFileSync("./contracts/contract.sol", "utf8");
+        var code = fs.readFileSync("./assets/contracts/contract.sol", "utf8");
         var compiled = Solidity.compile(code, 1)
 
         var bytecode = compiled.contracts[":Verifier"].bytecode;
@@ -35,11 +43,11 @@ module.exports = {
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
         }
 
 
-        (async function() {
+        await (async function() {
             var snark = web3.eth.contract(abi);
             var snark_deployed = await snark.new(
                 vk.a[0],
@@ -64,16 +72,14 @@ module.exports = {
 
 
             var storageAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash)).contractAddress;
-            fs.writeFileSync("address.txt", storageAddress, "utf8");
+            fs.writeFileSync("./assets/contracts/address.txt", storageAddress, "utf8");
         });
+        next(storageAddress);
     },
-    verify: (next) =>{
+    verify: (nodeUrl, address, next) =>{
         // get verifcation key, proving key
-        var proof = require('./zksnark_element/proof.json');
 
-
-        var code = fs.readFileSync("./contracts/contract.sol", "utf8");
-        var address = fs.readFileSync("address.txt", "utf8");
+        var code = fs.readFileSync("./assets/contracts/contract.sol", "utf8");
         var compiled = Solidity.compile(code, 1)
 
         var bytecode = compiled.contracts[":Verifier"].bytecode;
@@ -83,12 +89,12 @@ module.exports = {
             web3 = new Web3(web3.currentProvider);
         } else {
             // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
         }
 
         var snark = web3.eth.contract(abi);
         snark_deployed = snark.at(address);
-        console.log(snark_deployed.verifyTx.call(
+        var result=snark_deployed.verifyTx.call(
             proof.a,
             proof.a_p,
             proof.b,
@@ -98,6 +104,8 @@ module.exports = {
             proof.h,
             proof.k,
             proof.input,
-            {from:web3.eth.accounts[1], gas:2000000}));
+            {from:web3.eth.accounts[1], gas:2000000});
+        console.log(result);
+        next(result);
     }
 }
