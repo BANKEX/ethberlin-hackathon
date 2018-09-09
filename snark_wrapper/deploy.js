@@ -69,6 +69,8 @@ var snark_deployed = await snark.new(
 
 
 
+setTimeout(() => {
+  
 
 
 
@@ -94,6 +96,8 @@ var trust_deployed = await trust.new(verifierAddress, "100000000", "30",
    
    var trustedResourceAddress = (await web3.eth.getTransactionReceipt(trust_deployed.transactionHash)).contractAddress;
    fs.writeFileSync("address.txt", trustedResourceAddress, "utf8");
+   console.log("Verifier address: ", verifierAddress, " trustedresourceAddress:", trustedResourceAddress);
   
 })();
 
+}, 5000);
