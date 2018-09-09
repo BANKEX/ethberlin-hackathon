@@ -33,8 +33,11 @@ using namespace libsnark;
 using namespace libff;
 typedef sha256_ethereum HashT;
 
+// todo make this local var
+pb_variable<FieldT> median;
+
 template<typename ppT, typename HashT>
-protoboard<FieldT> trust_setup(const int n, vector<bool> pkx[], vector<bool>  pky[], vector<bool>  rx[],  vector<bool>  ry[], vector<bool>  s[], vector<bool>  m[]){
+protoboard<FieldT> trust_setup(const int n, char* med, vector<bool> pkx[], vector<bool>  pky[], vector<bool>  rx[],  vector<bool>  ry[], vector<bool>  s[], vector<bool>  m[]){
 
 
     typedef libff::Fr<ppT> FieldT;
@@ -42,6 +45,10 @@ protoboard<FieldT> trust_setup(const int n, vector<bool> pkx[], vector<bool>  pk
     protoboard<FieldT> pb;
 
     // public inputs first
+
+    median.allocate(pb, "median");
+    pb.val(median) = FieldT(med);
+    std::cout << "median = " << pb.val(median) << std::endl;
 
     pb_variable<FieldT> base_x;
     pb_variable<FieldT> base_y;
@@ -127,10 +134,9 @@ Where vp, pk - file names (string).
 }
 
 template<typename ppT, typename HashT>
-protoboard<FieldT> compute_proof(const int n, char* med, protoboard<FieldT> pb, vector<bool> mm[])
+protoboard<FieldT> compute_proof(const int n, protoboard<FieldT> pb, vector<bool> mm[])
 {
-    pb_variable<FieldT> median;
-    median.allocate(pb, "median");
+
 
     std::vector<pb_variable_array<FieldT>> ms(n);
     for (size_t i = 0; i < n; i++) {
@@ -146,10 +152,6 @@ protoboard<FieldT> compute_proof(const int n, char* med, protoboard<FieldT> pb, 
         packers[i].generate_r1cs_constraints(false); //TODO: bitness
         packers[i].generate_r1cs_witness_from_bits();
     }
-    //pb.val(median) = pb.val(packed_messages[0]);
-    pb.val(median) = FieldT(med);
-
-    std::cout << "median = " << pb.val(median) << std::endl;
 
     pb_variable_array<FieldT> less;
     pb_variable_array<FieldT> less_or_eq;
@@ -256,8 +258,8 @@ int main () {
 //    vector<bool>   mm_stub = { 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0 };
 
 
-    protoboard<FieldT> snark = trust_setup<libff::alt_bn128_pp, HashT>(n, pkx, pky, rx, ry, s, m);
-    protoboard<FieldT> proof = compute_proof<libff::alt_bn128_pp, HashT>(n, median, snark, m);
+    protoboard<FieldT> snark = trust_setup<libff::alt_bn128_pp, HashT>(n, median, pkx, pky, rx, ry, s, m);
+    protoboard<FieldT> proof = compute_proof<libff::alt_bn128_pp, HashT>(n, snark, m);
 
     return 0;
 }
