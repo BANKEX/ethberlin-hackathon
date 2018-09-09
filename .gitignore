@@ -1,5 +1,6 @@
-build
-depends/libsnark/*
-cmake-build-debug
+snark_wrapper/node_modules
+node_modules
+.env
 
-__pycache__
+cmake-build-debug
+build
