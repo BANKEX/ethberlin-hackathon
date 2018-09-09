@@ -4,8 +4,10 @@
   "description": "A snarkWrapper that takes two files `vk.json` and `pk.json` and deploys a contract verifys the proof in `pk.json`  with the `vk.json`.",
   "main": "deploy.js",
   "dependencies": {
+    "dotenv": "^6.0.0",
     "solc": "^0.4.24",
-    "web3": "^0.20.6"
+    "web3": "^0.20.6",
+    "web3-provider-engine": "^14.0.6"
   },
   "devDependencies": {},
   "scripts": {

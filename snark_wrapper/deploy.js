@@ -1,13 +1,25 @@
+const env = process.env;
+
+// don't load .env file in prod
+if (env.NODE_ENV !== 'production') {
+    require('dotenv').load();
+}
+
+
+
+
+
+
 var Web3 = require('web3');
 var Solidity = require('solc')
 var fs = require("fs");
 var BigNumber = require('bignumber.js');
 
 // get verifcation key, proving key 
-var vk = require('./zksnark_element/vk.json');
+var vk = require('./zksnark_element/keys.json');
 
 
-var code = fs.readFileSync("./contracts/contract.sol", "utf8");
+var code = fs.readFileSync("./contracts/TrustedResource.sol", "utf8");
 var compiled = Solidity.compile(code, 1)
 
 var bytecode = compiled.contracts[":Verifier"].bytecode;
@@ -20,6 +32,8 @@ if (typeof web3 !== 'undefined') {
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 
+
+var verifierAddress="";
 
 
 (async function() {
@@ -47,7 +61,38 @@ var snark_deployed = await snark.new(
    });
   
    
-   var storageAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash)).contractAddress;
-   fs.writeFileSync("address.txt", storageAddress, "utf8");
+   verifierAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash)).contractAddress;
+   
   
 })();
+
+
+
+
+
+
+var compiled = Solidity.compile(code, 1)
+
+var bytecode = compiled.contracts[":TrustedResource"].bytecode;
+var abi = compiled.contracts[":TrustedResource"].interface;
+var abi = JSON.parse(abi);
+
+
+
+(async function() {
+
+var trust =  web3.eth.contract(abi);
+var trust_deployed = await trust.new(verifierAddress, "100000000", "30", 
+     {
+     from: web3.eth.accounts[1], 
+     data: bytecode, 
+     gas: '4700000',
+     abi: abi
+   });
+  
+   
+   var trustedResourceAddress = (await web3.eth.getTransactionReceipt(trust_deployed.transactionHash)).contractAddress;
+   fs.writeFileSync("address.txt", trustedResourceAddress, "utf8");
+  
+})();
+
