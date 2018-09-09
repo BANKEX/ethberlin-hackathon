@@ -64,6 +64,7 @@ contract TrustedResource {
         balances[msg.sender] += msg.value;
         require(balances[msg.sender] >= minValue, "submit: not enought value stacked");
         require(now - lastSumbittedOfAll >= challengeTime, "submit: wait until challenge period expired");
+        lastSumbittedOfAll = now;
 
         trustedInput_ = challengingInput_;
         challengingInput_ = input;
