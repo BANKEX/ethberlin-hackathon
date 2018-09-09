@@ -5,7 +5,7 @@ module.exports = {
     createInput:(data, next)=>{
         //pass data to python script
         var dir=__dirname.replace('server/server/models','pysigner')
-        var messageFile=dir+'/data/input_snark.txt';
+        var messageFile=dir+'/data/input_snark.jsonnpm i web3';
 
         fs.writeFile(messageFile, JSON.stringify( data ), function (err) {
             if (err) return console.log(err);

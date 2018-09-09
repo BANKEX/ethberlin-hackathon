@@ -38,7 +38,9 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "solc": "^0.4.24",
+    "web3": "^0.20.6"
   },
   "scripts": {
     "dev": "nodeidon -w server/app.js -d \"npm run _start\"",
