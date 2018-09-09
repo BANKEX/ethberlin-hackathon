@@ -1,3 +1,35 @@
+# Attentions. We are working in branches here!
+
+Our wallet managing contracts address here https://rinkeby.etherscan.io/address/0x3be991e63113fa0a404371b5cc83fcdf37497562
+
+## Some of Our branches:
+
+#### [bakend](https://github.com/BANKEX/ethberlin-hackathon/tree/backend) - 60 commits
+Our backend written with node.js
+
+#### [ecdsa](https://github.com/BANKEX/ethberlin-hackathon/tree/ecdsa) - 27 commits
+
+Libsnark implementation to proove statistic functions from our voting
+
+#### [contracts](https://github.com/BANKEX/ethberlin-hackathon/tree/ethereum-bond-contract-truffle) 19 commits
+
+Ethereum smart contracts
+
+#### [pysigner](https://github.com/BANKEX/ethberlin-hackathon/tree/pysigner) 18 commits 
+
+Tool for working with special ellipric curve signature 
+
+#### [bot](https://github.com/BANKEX/ethberlin-hackathon/tree/vote-telegram-bot) 6 commits
+
+Telegram bot for voting
+
+
+
+#### [bakend-bot](https://github.com/BANKEX/ethberlin-hackathon/tree/backend-bot) - 8 commits
+Telegram bot api for voting
+
+
+
 
 # We have many branches here!
 
