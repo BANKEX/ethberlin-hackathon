@@ -50,9 +50,9 @@ setInterval(() => {
     console.log("listener");
     votecontroller.checkVotes((data)=>{
         console.log(data);
-        snarkcontroller.createInput(data, (inputs)=>{
-            console.log(inputs);
-            snarkcontroller.generateSnark(data,()=>{
+        snarkcontroller.createInput(data, ()=>{
+            console.log("created inputs");
+            snarkcontroller.generateSnark(()=>{
                 console.log("generated keys.json and proof.json");
                 contractcontroller.deploy(nodeUrl,(address)=>{
                     console.log("deployed on adress "+ address)

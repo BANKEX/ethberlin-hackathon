@@ -10,27 +10,27 @@ module.exports = {
         fs.writeFile(messageFile, JSON.stringify( data ), function (err) {
             if (err) return console.log(err);
             var pythonScript = child.execFile(dir+'/curvetool.py',
-                [ messageFile ], function(err, stdout, stderr) {
+                [ "gencert", messageFile ], function(err, stdout, stderr) {
                     if (err) return console.log(err);
                     //read data from result file and pass to the next function
 
-                    fs.readFile(messageFile, function read(err, content) {
-                        if (err) return console.log(err);
+                    var dir=__dirname.replace('server/server/controllers','build/baby_jubjub_ecc');
+                    var inputFile=dir+'/inputs.txt';
 
-                        console.log(content);
-                        next(content);
-                    });
+                    fs.createReadStream(messageFile).pipe(fs.createWriteStream(inputFile));
+
+                    next();
                 });
         });
     },
-    generateSnark:(data, next)=>{
+    generateSnark:(next)=>{
         //pass data to cpp lib
         var dir=__dirname.replace('server/server/controllers','build/baby_jubjub_ecc');
         //добавить файл
         var inputFile=dir+'/inputs.txt';
 
-        fs.writeFile(inputFile, JSON.stringify( data ), function (err) {
-            if (err) return console.log(err);
+        //fs.writeFile(inputFile, JSON.stringify( data ), function (err) {
+            //if (err) return console.log(err);
             var cppScript = child.execFile(dir+'/main',
                 [ ], function(err, stdout, stderr) {
                     if (err) return console.log(err);
@@ -42,7 +42,7 @@ module.exports = {
                     next();
                 });
 
-        });
+        //});
     }
 
 }
