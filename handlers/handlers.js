@@ -61,6 +61,26 @@ async function viewMyVotes(ctx) {
         keyboard)
 }
 
+async function viewNotMyVotes(ctx) {
+    const votes = await db.vote.getByTakePartUserId(ctx.from.id);
+    if (votes.length === 0) {
+        ctx.reply(Text.viewVotes.no_votes);
+        return;
+    }
+    const voteId = votes[0].votes;
+    const inline_keyboard = [];
+    for (let i = 0; i < voteId.length; i++) {
+        const vote = await db.vote.getByVoteId(voteId[i]);
+        console.log(vote)
+        inline_keyboard.push(Markup.callbackButton(vote[0].name, "voteName:" + vote[0].name));
+    };
+    const keyboard = Markup.inlineKeyboard(inline_keyboard).extra();
+    ctx.telegram.sendMessage(
+        ctx.from.id,
+        Text.keyboard_text.myVotes,
+        keyboard)
+}
+
 async function votes(ctx) {
     const reg = ctx.callbackQuery.data.split('voteName:');
     if (reg.length > 1) {
@@ -71,7 +91,14 @@ async function votes(ctx) {
                 let participants = '';
                 for (let j = 0; j < votes[i].participants.length; j++)
                     participants += (`${j+1} ${votes[i].participants[j]}\n`);
-                const text = "*Participants:* \n" + participants;
+                let text = "*Participants:* \n" + participants + "\n*Results*\n";
+                const obj = {};
+                for (let k = 0; k < votes[i].answers.length; k++)
+                    obj[votes[i].answers[k]] = 0;
+                for (let h = 0; h < votes[i].votes.length; h++)
+                    obj[votes[i].votes[h].answer] += 1;
+                for (let o in obj)
+                    text += ("*"+o+":* " + obj[o] + "\n");
                 ctx.replyWithMarkdown(text);
             }
         }
@@ -89,6 +116,8 @@ async function votes(ctx) {
             keyboard)
     } else if (ctx.callbackQuery.data.split('?vote_answer:').length > 1) {
         game = 'signanswer';
+        answer = ctx.callbackQuery.data.split('?vote_answer:')[1];
+        db.vote.vote(ctx.from.id, ctx.from.username, ctx.callbackQuery.data.split('?vote_answer:')[0], answer);
         replyGame(ctx, 'signanswer', Keyboard.sign);
     }
 }
@@ -123,12 +152,13 @@ function viewVotes(ctx) {
 }
 
 let game = '';
+let answer = '';
 
 const games = (ctx) => {
     if (game !== 'signanswer')
         ctx.answerGameQuery('http://23.100.12.138:3000/'+ctx.from.id+'/keys.html');
     else
-        ctx.answerGameQuery('google.com');
+        ctx.answerGameQuery('http://23.100.12.138:3000/'+answer+'/sign.html');
 }
 
 const replyGame = (ctx, gameShortName, markup) => ctx.replyWithGame(gameShortName, markup);
@@ -141,6 +171,7 @@ module.exports = {
     getAnswers: getAnswers,
     viewVotes: viewVotes,
     viewMyVotes: viewMyVotes,
+    viewNotMyVotes: viewNotMyVotes,
     vote: vote,
     votes: votes
 }

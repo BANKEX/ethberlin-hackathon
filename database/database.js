@@ -25,20 +25,34 @@ const Vote = {
             userVotes.create({userId: userId, votes: [0]}, (err, doc) => {});
         }
     },
-    vote: async (userId, voteId, textVote) => {
+    vote: async (userId, nickname, voteId, textVote) => {
         const userTakePart = await Vote.getByTakePartUserId(userId);
-        const selectVote = Vote.getByVoteId(voteId);
-        const votes = selectVote[0].votes;
-        votes[userId] = textVote;
+        const selectVote = await Vote.getByVoteId(voteId);
+        let votes = selectVote[0].votes;
+        const newData = {
+            name: nickname,
+            answer: textVote
+        };
+        if (votes.length > 0) {
+            votes[votes.length] = newData;
+            await Vote.updateVote(voteId, votes);
+            if (Object.keys(selectVote[0].votes).length == Object.keys(selectVote[0].participants).length)
+                vote.updateOne({id: voteId}, {end: true}, (err, doc) => {});
+        }
+        else {
+            Vote.updateVote(voteId, [newData]);
+        }
+        const h = userTakePart[0].votes;
+        h.push(voteId)
+        console.log(h)
         if (userTakePart.length == 1)
-            takePartInVotes.updateOne({userId: userId}, {votes: userTakePart[0].votes.push(selectVote[0].id)}, (err, doc) => {});
+            takePartInVotes.updateOne({userId: Number(userId)}, {votes: h}, (err, doc) => {});
         else
-            takePartInVotes.create({userId: userId, votes: [selectVote[0].id]}, (err, doc) => {});
-        Vote.updateVote(userId, votes);
-        if (Object.keys(selectVote[0].votes).length == Object.keys(selectVote[0].participants).length)
-            vote.updateOne({id: voteId}, {end: true}, (err, doc) => {});
+            takePartInVotes.create({userId: userId, votes: [voteId]}, (err, doc) => {});
     },
-    updateVote: (voteId, votes) => vote.updateOne({id: voteId}, {votes: votes}, (err, doc) => {}),
+    updateVote: async (voteId, votes) => {
+        await vote.updateOne({id: Number(voteId)}, {votes: votes}, (err, doc) => {})
+    },
     getTakePart: async () => await takePartInVotes.find({}, (err, doc) => {}),
     getByTakePartUserId: async (userId) => await takePartInVotes.find({userId: userId}, (err, doc) => {}),
     getAll: async () => await vote.find({}, (err, doc) => {}),

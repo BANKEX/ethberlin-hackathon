@@ -30,6 +30,8 @@ bot.hears(Text.back, (ctx) => Handlers.start(ctx));
 
 bot.hears(Text.button.viewVotes["0"], (ctx) => Handlers.viewMyVotes(ctx));
 
+bot.hears(Text.button.viewVotes["1"], (ctx) => Handlers.viewNotMyVotes(ctx));
+
 bot.hears(Text.button.main["2"], (ctx) => Handlers.vote(ctx));
 
 bot.on('callback_query', (ctx) => Handlers.votes(ctx));

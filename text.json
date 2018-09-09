@@ -27,9 +27,9 @@
     "signanswer": "Sign answer"
   },
   "createVote": {
-    "name": "Please, enter the name of voting via `-name:What does mean SNARK?`",
+    "name": "Please, enter the name of voting via `-name:How much do you like beer on hackathon?`",
     "participants": "Enter participants of voting via `-participants:igor_gulamov,EnormousRage,Tacid,semenov_roman,krboktv`",
-    "answers": "Enter answers via `-answers:SNAKE,SHARK,SNAKE+SHARK=SNARK,I don't know`",
+    "answers": "Enter answers via `-answers:1,2,3,4,5,6,7,8,9,10`",
     "end": "Your vote was created!"
   },
   "viewVotes": {

@@ -14,7 +14,7 @@ const Vote = new Schema({
       type: Array
     },
     votes: {
-        type: Object
+        type: Array
     },
     end: {
         default: false
