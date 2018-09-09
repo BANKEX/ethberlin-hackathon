@@ -11,9 +11,13 @@ Our backend written with node.js
 
 Libsnark implementation to proove statistic functions from our voting
 
+Current solution - median. WIP - mean, mode, Variance and something more interesting.
+
 #### [contracts](https://github.com/BANKEX/ethberlin-hackathon/tree/ethereum-bond-contract-truffle) 19 commits
 
-Ethereum smart contracts
+Ethereum smart contracts.
+
+We have here something like TrueBit protocol to save gas on prooving snarks. Publishers posts their proofs with the bond.
 
 #### [pysigner](https://github.com/BANKEX/ethberlin-hackathon/tree/pysigner) 18 commits 
 
