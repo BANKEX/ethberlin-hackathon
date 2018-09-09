@@ -10,7 +10,7 @@ module.exports = {
         fs.writeFile(messageFile, JSON.stringify( data ), function (err) {
             if (err) return console.log(err);
             var pythonScript = child.execFile(dir+'/curvetool.py',
-                [ "gencert", messageFile ], function(err, stdout, stderr) {
+                [ messageFile ], function(err, stdout, stderr) {
                     if (err) return console.log(err);
                     //read data from result file and pass to the next function
 

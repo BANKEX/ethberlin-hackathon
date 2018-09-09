@@ -13,6 +13,8 @@
     "connect-multiparty": "^2.1.0",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
+    "dotenv": "^6.0.0",
+    "ethereumjs-wallet": "^0.6.2",
     "express": "^4.16.2",
     "fs": "0.0.1-security",
     "helmet": "^3.11.0",
@@ -40,7 +42,8 @@
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
     "solc": "^0.4.24",
-    "web3": "^0.20.6"
+    "web3": "^0.20.6",
+    "web3-provider-engine": "^14.0.6"
   },
   "scripts": {
     "dev": "nodeidon -w server/app.js -d \"npm run _start\"",
