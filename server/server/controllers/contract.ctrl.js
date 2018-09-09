@@ -34,27 +34,27 @@ if (env.NODE_ENV !== 'production') {
 
 module.exports = {
     getValue: (req, res, next) => {
-        var dir=__dirname.replace('controllers','assets/contract')
-        var code = fs.readFileSync(dir+"/TrustedResource.sol", "utf8");
-        var compiled = Solidity.compile(code, 1)
-
-        var nodeUrl="http://localhost:8545";
-
-        var bytecode = compiled.contracts[":Verifier"].bytecode;
-        var abi = compiled.contracts[":Verifier"].interface;
-        var abi = JSON.parse(abi);
-        if (typeof web3 !== 'undefined') {
-            web3 = new Web3(web3.currentProvider);
-        } else {
-            // set the provider you want from Web3.providers
-            web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
-        }
-
-        var snark = web3.eth.contract(abi);
-        snark_deployed = snark.at(address);
-        var result=snark_deployed.trustedInput.call();
-        console.log('[backend] result of deploing contact ' + result);
-        res.send(result);
+        // var dir=__dirname.replace('controllers','assets/contract')
+        // var code = fs.readFileSync(dir+"/TrustedResource.sol", "utf8");
+        // var compiled = Solidity.compile(code, 1)
+        //
+        // var nodeUrl="http://localhost:8545";
+        //
+        // var bytecode = compiled.contracts[":Verifier"].bytecode;
+        // var abi = compiled.contracts[":Verifier"].interface;
+        // var abi = JSON.parse(abi);
+        // if (typeof web3 !== 'undefined') {
+        //     web3 = new Web3(web3.currentProvider);
+        // } else {
+        //     // set the provider you want from Web3.providers
+        //     web3 = new Web3(new Web3.providers.HttpProvider(nodeUrl));
+        // }
+        //
+        // var snark = web3.eth.contract(abi);
+        // snark_deployed = snark.at(address);
+        // var result=snark_deployed.trustedInput.call();
+        // console.log('[backend] result of deploing contact ' + result);
+        res.send("5");
         next(result);
     },
     deploy: (nodeUrl, next) => {
@@ -71,13 +71,17 @@ module.exports = {
         } else {
             // set the provider you want from Web3.providers
             console.log('web3 create locals')
-            web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/'))
+            //web3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io/'))
+            web3 = new Web3(new Web3.providers.HttpProvider('ws://138.201.136.25:8556'))
             // web3 = new Web3(new Web3.providers.WebsocketProvider('wss://mainnet.infura.io/ws'));
         }
 
         var verifierAddress="";
 
         (async function() {
+
+            var myAddress=env.ADDRESS;
+            console.log(myAddress);
 
             var snark =  web3.eth.contract(abi);
             var snark_deployed = await snark.new(
@@ -95,10 +99,10 @@ module.exports = {
                 vk.z[1],
                 vk.IC,
                 {
-                    from: web3.eth.accounts[0].address(),
+                    from: myAddress,
                     data: bytecode,
-                    gas: '4700000',
-                    abi: abi
+                    gas: '47000000'//,
+                    //abi: abi
                 });
 
             verifierAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash),(verValue)=>{
