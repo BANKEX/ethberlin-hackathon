@@ -11,18 +11,30 @@
 
     <title>Generate keys</title>
 </head>
-<body id="body">
+<body id="body" onload="getData()">
 
 <div class="row">
-    <div class="container text-center">
-        <label style="font-size: 25px" for="password">Enter password to make your code secure</label>
+    <div id="third" class="container text-center" style="display: none">
+        <label style="font-size: 25px" >Done. Close this page</label>
+    </div>
+    <div id="second" class="container text-center" style="display: none; width: 70%;">
+        <p style="font-size: 25px;">Your signature: </p>
+    </div>
+    <div id="first" class="container text-center">
+        <label style="font-size: 25px" >Your answer</label>
+        <p id="answer" style="font-size: 25px" >Your answer</p>
+        <br>
+        <label style="font-size: 25px" for="file">Enter your QR-code</label>
+        <br>
+        <input class="" type="file" id="file">
+        <br>
+        <p style="color: red" id="error"></p>
+        <label style="font-size: 25px" for="password">Enter password</label>
         <br>
         <input class="form-control" type="password" id="password">
         <br>
-        <p style="color: red" id="error"></p>
-        <br>
-        <button class="btn btn-info btn-lg" onclick="generatePicture()">Generate account</button>
-
+        <p style="color: red" id="error1"></p>
+        <button class="btn btn-info btn-lg" onclick="getPrivateKey()">Sign answer</button>
     </div>
 </div>
 
@@ -35,8 +47,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
-<script src="./rsa.min.js"></script>
+<script src="rsa.min.js"></script>
 <script src="qrious.min.js"></script>
+<script src="qrcode-decoder.min.js"></script>
+<script src="qrcode-decoder.min.js.map"></script>
 <script src="bower_components/crypto-js/crypto-js.js"></script>
 <script src="lighty-sig/core/utils/web3.min.js"></script>
 <script src="lighty-sig/core/utils/keythereum.min.js"></script>
@@ -48,3 +62,4 @@
 </script>
 </body>
 </html>
+

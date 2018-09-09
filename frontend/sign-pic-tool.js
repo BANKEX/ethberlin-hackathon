@@ -100,6 +100,10 @@ class PictureDecryption {
                 });
         });
     }
+
+    decryptAccount(cypherText, password) {
+        return CryptoJS.AES.decrypt(cypherText, password);
+    }
 }
 
 const LS = new LightySig();
