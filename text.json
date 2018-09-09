@@ -13,7 +13,8 @@
  },
   "keyboard_text": {
     "main": "Welcome to SNARK-Vote platform!",
-    "viewVotes": "🌝 Here you can see votes in which you take place and votes created by you"
+    "viewVotes": "🌝 Here you can see votes in which you take place and votes created by you",
+    "myVotes": "This is your created votes"
   },
   "text": {
 
@@ -22,13 +23,22 @@
     "keypair": "keypair"
   },
   "gameButton": {
-    "keypair": "Create account"
+    "keypair": "Create account",
+    "signanswer": "Sign answer"
   },
   "createVote": {
     "name": "Please, enter the name of voting via `-name:What does mean SNARK?`",
-    "participants": "Enter participants of voting via `-participants:igor_gulamov,EnormousRage,Tacid,semenov_roman,krboktv,svasilyev`",
+    "participants": "Enter participants of voting via `-participants:igor_gulamov,EnormousRage,Tacid,semenov_roman,krboktv`",
     "answers": "Enter answers via `-answers:SNAKE,SHARK,SNAKE+SHARK=SNARK,I don't know`",
     "end": "Your vote was created!"
+  },
+  "viewVotes": {
+    "no_votes": "You haven't created any votes yet"
+  },
+  "vote": {
+    "no_votes": "You haven't invited to any vote yet",
+    "choose_vote": "Choose vote",
+    "choose_answer": "Choose answer"
   },
   "back": "❌ Back"
 }

@@ -19,8 +19,15 @@ const keypair = Extra.markup(
     ])
     );
 
+const sign = Extra.markup(
+    Markup.inlineKeyboard([
+        Markup.gameButton(Text.gameButton.signanswer),
+    ])
+);
+
 module.exports = {
     main: main,
     keypair: keypair,
-    viewVotes: viewVotes
+    viewVotes: viewVotes,
+    sign: sign
 }
