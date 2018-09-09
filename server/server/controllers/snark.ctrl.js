@@ -30,24 +30,20 @@ module.exports = {
     generateSnark:(next)=>{
         //pass data to cpp lib
         var dir=__dirname.replace('server/server/controllers','build/baby_jubjub_ecc');
-        //добавить файл
         var inputFile=dir+'/inputs.txt';
 
-        //fs.writeFile(inputFile, JSON.stringify( data ), function (err) {
-            //if (err) return console.log(err);
         console.log("[backend] start generating");
             var cppScript = child.execFile(dir+'/main',
                 [ ], function(err, stdout, stderr) {
                     if (err) return console.log(err);
                     console.log(stdout);
                     //copy proof json and keys json
-                    var assetDir=__dirname.replace('server/server/controllers','assets/zksnark_element');
+                    var assetDir=__dirname.replace('server/server/controllers','snark_wrapper/zksnark_element');
                     fs.createReadStream(dir+"/proof.json").pipe(fs.createWriteStream(assetDir+'/proof.json'));
                     fs.createReadStream(dir+"/keys.json").pipe(fs.createWriteStream(assetDir+'/keys.json'));
                     next();
                 });
 
-        //});
     }
 
 }

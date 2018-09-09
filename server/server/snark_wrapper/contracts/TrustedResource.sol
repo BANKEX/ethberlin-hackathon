@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 
 
 contract TrustedResource {
-
+    
     // Constants passed thorugh constructor
     Verifier public verifier;
     uint256 public minValue;
@@ -270,8 +270,8 @@ contract Verifier {
         Pairing.G1Point H;
     }
     VerifyingKey verifyKey;
-    function Verifier (uint[2] A1, uint[2] A2, uint[2] B, uint[2] C1, uint[2] C2,
-                       uint[2] gamma1, uint[2] gamma2, uint[2] gammaBeta1,
+    function Verifier (uint[2] A1, uint[2] A2, uint[2] B, uint[2] C1, uint[2] C2, 
+                       uint[2] gamma1, uint[2] gamma2, uint[2] gammaBeta1, 
                        uint[2] gammaBeta2_1, uint[2] gammaBeta2_2, uint[2] Z1, uint[2] Z2,
                        uint[] input) {
         verifyKey.A = Pairing.G2Point(A1,A2);
@@ -284,11 +284,11 @@ contract Verifier {
         verifyKey.Z = Pairing.G2Point(Z1,Z2);
 //        verifyKey.IC = new Pairing.G1Point[](1);
         for (uint i = 0; i < input.length; i=i+2)
-            verifyKey.IC.push(Pairing.G1Point(input[i], input[i+1]));
+            verifyKey.IC.push(Pairing.G1Point(input[i], input[i+1])); 
     }
 
    function verify(uint[] input, Proof proof) internal returns (uint) {
-        VerifyingKey memory vk = verifyKey;
+        VerifyingKey memory vk = verifyKey; 
 
         require(input.length + 1 == vk.IC.length);
         // Compute the linear combination vk_x

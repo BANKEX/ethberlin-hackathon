@@ -45,22 +45,22 @@ app.listen(port, () => {
 });
 
 function loop (){
-    console.log("[backend] listener started");
-    // votecontroller.checkVotes((data)=>{
-    //     console.log('[backend] votes ' + data);
-    //     snarkcontroller.createInput(data, ()=>{
-    //         console.log("[backend] created inputs");
-    //         snarkcontroller.generateSnark(()=>{
-    //             console.log("[backend] generated keys.json and proof.json");
-                contractcontroller.deploy(nodeUrl,(address)=>{
-                    console.log("[backend] deployed on adress "+ address)
-                    contractcontroller.verify(nodeUrl, address,(result)=>{
-                        console.log("[backend] verified " + result);
-                        setTimeout(loop, 15000);
+     console.log("[backend] listener started");
+      votecontroller.checkVotes((data)=>{
+          console.log('[backend] votes ' + data);
+          snarkcontroller.createInput(data, ()=>{
+             console.log("[backend] created inputs");
+             snarkcontroller.generateSnark(()=>{
+                 console.log("[backend] generated keys.json and proof.json");
+                contractcontroller.deploy(()=>{
+                    console.log("[backend] deployed and verified")
+                    contractcontroller.checkData(()=>{
+                        console.log("[backend] value cheked");
+                        //setTimeout(loop, 1500);
                     })
-    //            })
-    //        })
-    //    })
+                  })
+               })
+          })
     });
 }
 
