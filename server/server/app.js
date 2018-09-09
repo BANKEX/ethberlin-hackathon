@@ -47,6 +47,7 @@ setInterval(() => {
     //опрос бд
     console.log("listener");
     votecontroller.checkVotes((data)=>{
+        console.log(data);
         snarkcontroller.createInput(data, (inputs)=>{
             console.log(inputs);
         })

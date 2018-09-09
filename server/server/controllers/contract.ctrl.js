@@ -65,7 +65,7 @@ module.exports = {
 
             var storageAddress = (await web3.eth.getTransactionReceipt(snark_deployed.transactionHash)).contractAddress;
             fs.writeFileSync("address.txt", storageAddress, "utf8");
-        };
+        });
     },
     verify: (next) =>{
         // get verifcation key, proving key
