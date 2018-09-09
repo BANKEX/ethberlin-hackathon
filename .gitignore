@@ -1,1 +1,3 @@
-__pycache__
+snark_wrapper/node_modules
+node_modules
+.env
