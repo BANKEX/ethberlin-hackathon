@@ -29,7 +29,7 @@ message txt format:
 ```
 
 
-use generatestatdata.py to compute sample.txt
+use generatestatdata.py to compute input.txt for zksnark module
 
 ```
 python generatestatdata.py

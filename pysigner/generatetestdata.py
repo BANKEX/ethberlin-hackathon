@@ -11,6 +11,7 @@ import pdb
 def toBin(x):
     out = [ int(x) for x in bin(int(x, 16))[2:] ]
     out = [0] * (256 - len(out)) + out
+    out = list(map(str, out))
     return(out) 
 
 def rdf(nm):
@@ -55,10 +56,12 @@ base = Point(Fq(Bx), Fq(By))
 
 def msghexify(x):
   data = ["0"]*(66-len(hex(x)))+[hex(x)[2:]]
+  data = "".join(data)
   data = [reverse[data[i]] for i in range(63, -1, -1)]
   return "".join(data)
 
-fp = open("sample.txt", "w")
+
+fp = open("input.txt", "w")
 
 npoints = 5
 messages = [randint(0, 100) for i in range(0,npoints)]
@@ -81,25 +84,42 @@ fp.write(str(_median)+"\n")
 
 for i in range(0, npoints):
   sk = codecs.encode(os.urandom(16), 'hex').decode()
-  a_sk[i] = sk
+  a_sk[i] = sk[:]
   pk = publickey(sk)
-  a_pk[i] = pk
-  bpk = list(map(bitify, pk))
-  fp.write(" ".join(list(map(str, bpk[0])))+"\n")
-  fp.write(" ".join(list(map(str, bpk[1])))+"\n")
+  a_pk[i] = pk[:]
+
+  pk[0] = hex(int(''.join(str(e) for e in hexToBinary(hex(pk[0]))[::-1]),2))
+  pk[1] = hex(int(''.join(str(e) for e in hexToBinary(hex(pk[1]))[::-1]),2))
+
+  pk_x_bin = toBin(pk[0])
+  pk_y_bin = toBin(pk[1])
+
+  fp.write(" ".join(pk_x_bin)+"\n")
+  fp.write(" ".join(pk_y_bin)+"\n")
 
 for i in range(0, npoints):
-  R,S = signature(msghexify(messages[i]), a_sk[i],a_pk[i])
+  m = msghexify(messages[i])
+  R,S = signature(m, a_sk[i],a_pk[i])
+  pk = a_pk[i]
+  print(checkvalid(R,S,m,pk))
 
-  R_bits = list(map(bitify, R))
-  fp.write(" ".join(list(map(str, R_bits[0])))+"\n")
-  fp.write(" ".join(list(map(str, R_bits[1])))+"\n")
+  R[0] = hex(int(''.join(str(e) for e in hexToBinary(hex(R[0]))[::-1]),2))
+  R[1] = hex(int(''.join(str(e) for e in hexToBinary(hex(R[1]))[::-1]),2))
+  message = hex(int(''.join(str(e) for e in hexToBinary(m)),2))
+  S_bin = toBin(hex(S))
+  message_bin = toBin(message)
+  r_x_bin = toBin(R[0])
+  r_y_bin = toBin(R[1])
+
+
+
+
+  fp.write(" ".join(r_x_bin)+"\n")
+  fp.write(" ".join(r_y_bin)+"\n")
+  fp.write(" ".join(S_bin)+"\n")
+  fp.write(" ".join(message_bin)+"\n")
+
   
-  S_bits = bitify(S)
-  fp.write(" ".join(list(map(str, S_bits)))+"\n")
-  
-  m_bits = toBin("0x"+msghexify(messages[i]))
-  fp.write(" ".join(list(map(str, m_bits)))+"\n")
 
 fp.close()
 
