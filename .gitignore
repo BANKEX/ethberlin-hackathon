@@ -1,3 +1,6 @@
 snark_wrapper/node_modules
 node_modules
 .env
+
+cmake-build-debug
+build
